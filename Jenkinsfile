@@ -5,16 +5,22 @@ pipeline {
         
         // Stage for Git Branches Checkout //
         stage('Checkout Git Branch') {
-          echo "This is Checkout Git Branch"
+            steps{
+                echo "This is Checkout Git Branch"
+            }
         }
       
       stage('Deploy'){
-          echo "This is Deployment Environment"
+          steps{
+                echo "This is Deployment Environment"
+            }          
       }
     }
   posts {
     script {
-      echo "This is Post script"
+        steps{
+                echo "This is Post script"
+            }      
     }
   }
 }
