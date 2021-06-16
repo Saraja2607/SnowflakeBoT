@@ -1,1 +1,1 @@
-import sys
+print 'myFile executed'
