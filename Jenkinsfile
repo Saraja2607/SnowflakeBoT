@@ -1,27 +1,22 @@
 pipeline {
     agent any
-    // Stages begins here //
+
     stages {
-        
-        // Stage for Git Branches Checkout //
         stage('Checkout Git Branch') {
-            steps{
-                git branch: 'main', 
-                    url: 'https://github.com/Saraja2607/SnowflakeBoT.git'
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/Saraja2607/SnowflakeBoT.git']]])
             }
         }
-      
-      stage('Deploy'){
-          steps{
-                echo "This is Deployment Environment"
-            }          
-      }
+        stage('Build') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Saraja2607/SnowflakeBoT.git'
+                bat 'python myFile.py'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'This job has been tested'
+            }
+        }
     }
-  posts {
-    script {
-        steps{
-                echo "This is Post script"
-            }      
-    }
-  }
 }
