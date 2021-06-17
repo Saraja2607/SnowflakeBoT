@@ -6,7 +6,8 @@ pipeline {
         // Stage for Git Branches Checkout //
         stage('Checkout Git Branch') {
             steps{
-                echo "This is Checkout Git Branch"
+                git branch: 'main', 
+                    url: 'https://github.com/Saraja2607/SnowflakeBoT.git'
             }
         }
       
