@@ -10,7 +10,7 @@ pipeline {
         stage('Build') {
             steps {
                 git branch: 'main', url: 'https://github.com/Saraja2607/SnowflakeBoT.git'
-                bat 'python myFile.py'
+                sh 'python myFile.py'
             }
         }
         stage('Test') {
