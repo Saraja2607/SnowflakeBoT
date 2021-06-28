@@ -46,68 +46,10 @@ pipeline {
 		    steps {
 		        script {
 				
-				sh('''snowsql --dbname ${database} --schemaname ${schema} --config  '''+"${snowsql_config}"+''' + -q 'select * from test1.Agent' --connection sf_conn  2>&1''')
+				sh('''snowsql --dbname 'sf_bot' --schemaname 'test1' --config  '''+"${snowsql_config}"+''' + -q 'select * from Agents' --connection sf_conn  2>&1''')
 		        FILES_CHANGED= sh(script: "set +x && git log -m -1 --name-only --diff-filter=ACM --pretty='format:' `git rev-parse HEAD` | sort -u | grep -i '.sql\$' > ${WORKSPACE}/committed_files.txt")
                 sh("set +x && echo 'DEPLOYBEGIN' && echo '******Deploying from release/${env} Branch to ${app_name} ${env} Environment******'")
-                sh('''
-   set +x     
-   echo "" > status
-   git show --pretty=fuller ${GIT_COMMIT} | head -n 10 | tr -d '[:blank:]' | sed 's/commit/CommitID:/' | sed 's/</{/' | sed 's/>/}/' | sed 's/(//' | sed 's/)//' > git_details.txt     
-   COMMIT_ONELINER=`sed s/"'"//g git_details.txt | xargs`
-   while read -r file || [[ -n "$file" ]]
-    do
-      if [[ ! -z "$file" ]]; then
-       statement_type=`echo "$file" |  cut -d / -f 5`
-       if [ ${statement_type} = "ddl" ]; then
-        database_name=`echo "$file" |  cut -d / -f 4`
-        database="${database_name}_'''+"${env}"+'''"
-        schema=`echo "$file" |  cut -d / -f 6`
-        exec_type=`echo "$file" |  cut -d / -f 7 | tr '[:lower:]' '[:upper:]'`
-        echo "$(date): Database: ${database}"
-        echo "$(date): Schema: ${schema}"
-        echo "$(date): File_path: ${file}"
-        echo "$(date): Executing sql file $(cat ${file})."
-        echo "$(date): Proceeding to create ${exec_type} in ${database} database and ${schema} schema.! " > ${WORKSPACE}/logs/${app_name}_${BUILD_NUMBER}.log
-        echo "$(date): Proceeding to create ${exec_type} in ${database} database and ${schema} schema.! " >> snow_sql_output.log
-        exec_sql=`snowsql --dbname ${database} --schemaname ${schema} --config '''+"${snowsql_config}"+''' --filename ${file} --connection sf_conn  2>&1`
-        echo "$(date): Snowsql execution ${exec_sql}"
-        echo "${exec_sql}" >> snow_sql_output.log
-       elif [ ${statement_type} = "release" ]; then
-        echo "$(date): File_path: ${file}"
-        echo "$(date): Executing release sql file $(cat ${file})."
-        echo "$(date): Proceeding to create release query.! " > ${WORKSPACE}/logs/${app_name}_${BUILD_NUMBER}.log
-        echo "$(date): Proceeding to create release query.!" >> snow_sql_output.log
-        exec_sql=`snowsql --config '''+"${snowsql_config}"+''' --filename ${file} --connection wmhbo 2>&1`
-        echo "$(date): Snowsql execution ${exec_sql}"
-        echo "${exec_sql}" >> snow_sql_output.log
-       
-       else
-        echo "$(date): File_path: ${file}"
-        echo "$(date): Executing  sql file $(cat ${file})."
-        echo "$(date): Proceeding to create .! " > ${WORKSPACE}/logs/${APP_NAME}_${BUILD_NUMBER}.log
-        echo "$(date): Proceeding to create .!" >> snow_sql_output.log
-        exec_sql=`snowsql --config '''+"${snowsql_config}"+''' --filename ${file} --connection wmhbo 2>&1`
-        echo "$(date): Snowsql execution ${exec_sql}"
-        echo "${exec_sql}" >> snow_sql_output.log  
-       fi
-
-      else
-          echo "$(DATE): No user file found for creation!!"
-          exit 0
-      fi
-      echo "***************************************************"
-    done < ${WORKSPACE}/committed_files.txt
-echo "---------------------------------------"
-
-LOG_READ=$(cat snow_sql_output.log)
-
-if grep -q 'successfully' "snow_sql_output.log"; then
-  echo "$(date): All sql statements has been executed successfully"
-else
-  echo "$(date): One or more statement has failed to execute.!!"
-  ##python wmd2c-devops-admin/python/ses/jenkins_notify_users.py --env ${ENV} --branch '''+"${branch_name}"+''' --commitdetails "GitBranch:'''+"${branch_name}"+''' ${COMMIT_ONELINER}" --url '''+"${BUILD_URL}console"+''' --build_no '''+"${BUILD_NUMBER}"+''' --logs "${LOG_READ}" --status 'failure' --buildname '''+"${JOB_NAME}"+''' --email '''+"${DL_EMAIL}"+'''
-fi
-''')
+                
                 sh("set +x && echo 'STAGEDONE'")
 
 		    }
