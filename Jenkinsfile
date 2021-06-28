@@ -46,7 +46,7 @@ pipeline {
 		    steps {
 		        script {
 				
-				sh("snowsql --dbname ${database} --schemaname ${schema} --config '+"${snowsql_config}"+' -q 'select * from test1.Agent' --connection sf_conn  2>&1")
+				sh("snowsql --dbname ${database} --schemaname ${schema} --config +"${snowsql_config}"+ -q 'select * from test1.Agent' --connection sf_conn  2>&1")
 		        FILES_CHANGED= sh(script: "set +x && git log -m -1 --name-only --diff-filter=ACM --pretty='format:' `git rev-parse HEAD` | sort -u | grep -i '.sql\$' > ${WORKSPACE}/committed_files.txt")
                 sh("set +x && echo 'DEPLOYBEGIN' && echo '******Deploying from release/${env} Branch to ${app_name} ${env} Environment******'")
                 sh('''
