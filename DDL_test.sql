@@ -1,1 +1,1 @@
-create table DDL_test(col1 varchar);
+create table DDL_test2(col1 varchar);
