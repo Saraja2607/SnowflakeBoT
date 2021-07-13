@@ -1,1 +1,1 @@
-Create table cmt_schema1.test_table2(col1 varchar);
+CREATE TABLE "CMT_DEV"."CMT_SCHEMA1"."DDL_TEST2" ("COL1" STRING);
