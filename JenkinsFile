@@ -3,7 +3,7 @@ def app_name='snowflake'
 def repo_name='SnowflakeBoT'
 def snowsql_config="/home/ubuntu/.snowsql/config"
 
-def branch_name='release/dev'
+def branch_name='main'
 def code_repo_name='https://github.com/Saraja2607/SnowflakeBoT.git' // SSH Repository of deploy repo //
 def admin_repo='https://github.com/Saraja2607/sf_admin.git' //Admin Ansible repo here //
 
