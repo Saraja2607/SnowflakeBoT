@@ -1,1 +1,1 @@
-Create table cmt_schema1.test_table1(col1 varchar);
+Create table cmt_schema1.test_table2(col1 varchar);
