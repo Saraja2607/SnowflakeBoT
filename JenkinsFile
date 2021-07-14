@@ -1,10 +1,9 @@
-def env='beta'
-
+def env='dev'
 def app_name='snowflake'
 def repo_name='SnowflakeBoT'
 def snowsql_config="/home/ubuntu/.snowsql/config"
 
-def branch_name='beta'
+def branch_name='main'
 def code_repo_name='https://github.com/Saraja2607/SnowflakeBoT.git' // SSH Repository of deploy repo //
 def admin_repo='https://github.com/Saraja2607/sf_admin.git' //Admin Ansible repo here //
 
@@ -31,7 +30,7 @@ pipeline {
              // Create Ansible admin directory and do a checkout from master //
              dir('CMT_CoP') {
              checkout([$class: 'GitSCM', 
-             branches: [[name: '*/beta']], 
+             branches: [[name: '*/main']], 
              extensions: [], 
              userRemoteConfigs: [[url: "${admin_repo}"]]]) 
              }
