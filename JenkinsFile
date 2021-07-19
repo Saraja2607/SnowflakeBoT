@@ -28,14 +28,7 @@ pipeline {
 		  stage('Checkout Git Branch') {
 			steps{
              git branch: "${params.branchname}", url: "${code_repo_name}"
-                    
-             // Create Ansible admin directory and do a checkout from master //
-             dir('cmt') {
-             checkout([$class: 'GitSCM', 
-             branches: [[name: '*/main']], 
-             extensions: [], 
-             userRemoteConfigs: [[url: "${admin_repo}"]]]) 
-             }
+             
             }
 		  }
 		  stage('Deploy') {
