@@ -27,8 +27,7 @@ pipeline {
         // Stage for Git Branches Checkout //
 		  stage('Checkout Git Branch') {
 			steps{
-             git branch_name: "${params.branchname}", url: 'https://github.com/jenkinsci/git-parameter-plugin.git',
-             url: "${code_repo_name}"
+             git branch_name: "${params.branchname}", url: "${code_repo_name}"
                     
              // Create Ansible admin directory and do a checkout from master //
              dir('cmt') {
