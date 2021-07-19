@@ -1,9 +1,9 @@
-def env='dev'
+def env='prod'
 def app_name='snowflake'
 def repo_name='SnowflakeBoT'
 def snowsql_config="/home/ubuntu/.snowsql/config"
 
-def branch_name='main'
+def branch_name='release/prod'
 def code_repo_name='https://github.com/Saraja2607/SnowflakeBoT.git' // SSH Repository of deploy repo //
 def admin_repo='https://github.com/Saraja2607/sf_admin.git' //Admin Ansible repo here //
 
@@ -41,7 +41,7 @@ pipeline {
 				sh 'echo "This is my Deploy step"'
                 script {                
                 sh('''snowsql --dbname 'cmt_dev' --schemaname 'cmt_schema1' --config  '''+"${snowsql_config}"+''' -q 'select current_date' --connection sf_conn  2>&1''')
-				FILES_CHANGED= sh(script: "set +x && git log -m -1 --name-only --diff-filter=ACM --pretty='format:' `git rev-parse HEAD` | sort -u | grep -i '.sql\$' > ${WORKSPACE}/committed_files.txt")
+		FILES_CHANGED= sh(script: "set +x && git log -m -1 --name-only --diff-filter=ACM --pretty='format:' `git rev-parse HEAD` | sort -u | grep -i '.sql\$' > ${WORKSPACE}/committed_files.txt")
                 sh("set +x && echo 'DEPLOYBEGIN' && echo '******Deploying from release/${env} Branch to ${app_name} ${env} Environment******'")
                 sh("cat ${WORKSPACE}/committed_files.txt")
 								
@@ -55,13 +55,13 @@ pipeline {
 				
 				while read -r file || [[ -n "$file" ]]
                 do
-                  statement_type=`echo "$file" |  cut -d / -f 1`
+                  statement_type=`echo "$file" |  cut -d / -f 2`
                   echo "statement_type: ${statement_type}, file: $file"
-                  if [ ${statement_type} = "DDL" ]; then
-                   database_name=`echo "$file" |  cut -d / -f 4`
+                  if [ ${statement_type} = "ddl" ]; then
+                   database_name=`echo "$file" |  cut -d / -f 1`
                    database="${database_name}_'''+"${env}"+'''"
-                   schema=`echo "$file" |  cut -d / -f 6`
-                   exec_type=`echo "$file" |  cut -d / -f 7 | tr '[:lower:]' '[:upper:]'`
+                   schema=`echo "$file" |  cut -d / -f 3`
+                   exec_type=`echo "$file" |  cut -d / -f 4 | tr '[:lower:]' '[:upper:]'`
                    echo " Database: ${database}"
                    echo " Schema: ${schema}"
                    echo " File_path: ${file}"
