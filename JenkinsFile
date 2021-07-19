@@ -3,7 +3,7 @@ def app_name='snowflake'
 def repo_name='SnowflakeBoT'
 def snowsql_config="/home/ubuntu/.snowsql/config"
 
-def branch_name='release/dev'
+//def branch_name='release/dev'
 def code_repo_name='https://github.com/Saraja2607/SnowflakeBoT.git' // SSH Repository of deploy repo //
 def admin_repo='https://github.com/Saraja2607/sf_admin.git' //Admin Ansible repo here //
 
@@ -18,17 +18,20 @@ def COMMIT_ONELINER  // NO ACTION REQUIRED : For Commit info assignment //
 // Declarative Pipeline starts here //
 pipeline {
     agent any
+	parameters {
+    gitParameter branchFilter: 'release/*', defaultValue: 'dev', name: 'branchname', type: 'PT_BRANCH'
+	}
     // Stages begins here //
     stages {
         
         // Stage for Git Branches Checkout //
 		  stage('Checkout Git Branch') {
 			steps{
-             git branch: "${branch_name}",
+             git branch_name: "${params.branchname}", url: 'https://github.com/jenkinsci/git-parameter-plugin.git',
              url: "${code_repo_name}"
                     
              // Create Ansible admin directory and do a checkout from master //
-             dir('CMT_CoP') {
+             dir('cmt') {
              checkout([$class: 'GitSCM', 
              branches: [[name: '*/main']], 
              extensions: [], 
