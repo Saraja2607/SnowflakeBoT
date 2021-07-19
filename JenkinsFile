@@ -19,7 +19,7 @@ def COMMIT_ONELINER  // NO ACTION REQUIRED : For Commit info assignment //
 pipeline {
     agent any
 	parameters {
-    gitParameter branchFilter: 'origin/(.*)', defaultValue: 'dev', name: 'branchname', type: 'PT_BRANCH'
+    gitParameter branchFilter: 'origin/(.*)', defaultValue: 'release/dev', name: 'branchname', type: 'PT_BRANCH'
 	}
     // Stages begins here //
     stages {
