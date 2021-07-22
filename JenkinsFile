@@ -38,6 +38,13 @@ pipeline {
 		FILES_CHANGED= sh(script: "set +x && git log -m -1 --name-only --diff-filter=ACM --pretty='format:' `git rev-parse HEAD` | sort -u | grep -i '.sql\$' > ${WORKSPACE}/committed_files.txt")
                 sh("set +x && echo 'DEPLOYBEGIN' && echo '******Deploying from release/${env} Branch to ${app_name} ${env} Environment******'")
                 sh("cat ${WORKSPACE}/committed_files.txt")
+				
+				// Create directory if doesn't exists, try catch to ignore errors //
+                    try {
+                        sh "set +x && mkdir ${WORKSPACE}/logs 2>&1 >/dev/null"
+                     } catch (Exception e) {
+                        echo 'Log Directory already exists'
+                    }
 								
 				sh('''
                 set +x     
@@ -105,13 +112,39 @@ pipeline {
 		// Post action determines Success or Failure and send notifications //
 		post {
 			always {
+				sh 'echo "This is my post step"'
 				script {
+					
 					// Below "if condition" is for console log parsing //
 					if (currentBuild.currentResult == "FAILURE") {
-						 sh("set +x && echo 'STAGEDONE'")
+						 sh("set +x && echo 'Post:STAGEDONE'")
 					} else {
-						 sh("set +x")
+						 sh("set +x && echo 'Post:SUCCESS'")
 				}
+			
+				READ_LOG = sh(script: '''set +x && awk "NF" ${WORKSPACE}/logs/${app_name}_${BUILD_NUMBER}.log | tr -d "',)("''', returnStdout: true).trim()
+				SQL_OUTPUT = sh(script: "cat snow_sql_output.log", returnStdout: true).trim()
+				
+				
+				sh 'echo "after read log"'
+				if(SQL_OUTPUT.contains('error')){
+					sh 'echo "contains error"'
+					body = '"One or more errors occured during sql execution"'
+					status = 'SQL_FAILED'
+					
+				}
+				else{
+					sh 'echo "does not contain error"'
+					body = '"All sql statements has been executed successfully"'
+					//sh 'echo "${var_GIT_COMMIT}"'
+					status = 'SQL_SUCCESS'
+				}
+				sh 'echo "before python exec"'
+				sh (''' 
+					echo "This is my test step"
+    				python /home/ubuntu/test_email.py  '''+"${JOB_NAME}"+"_"+"${currentBuild.currentResult}"+"_"+"${env}"+"_Build#"+"${BUILD_NUMBER}"+"-"+"${status}"+''' '''+"${body}"+''' '''+"'${READ_LOG}'"+''' '''+"snow_sql_output.log"+''' 
+					echo "This is my after python step"
+    				''')
 			}
 		}
 	}
