@@ -129,17 +129,17 @@ pipeline {
 				
 				
 				sh 'echo "after read log"'
-				if(SQL_OUTPUT.contains('error')){
-					sh 'echo "contains error"'
-					body = '"One or more errors occured during sql execution"'
-					status = 'SQL_FAILED'
-					
-				}
-				else{
+				if(SQL_OUTPUT.contains('successfully')){
 					sh 'echo "does not contain error"'
 					body = '"All sql statements has been executed successfully"'
 					//sh 'echo "${var_GIT_COMMIT}"'
 					status = 'SQL_SUCCESS'
+					
+				}
+				else{
+					sh 'echo "contains error"'
+					body = '"One or more errors occured during sql execution"'
+					status = 'SQL_FAILED'
 				}
 				sh 'echo "before python exec"'
 				sh (''' 
