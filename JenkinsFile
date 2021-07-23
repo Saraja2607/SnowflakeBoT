@@ -34,8 +34,13 @@ pipeline {
 			steps {
 				sh 'echo "This is my Deploy step"'
                 script {                
-                sh('''snowsql --dbname 'cmt_dev' --schemaname 'cmt_schema1' --config  '''+"${snowsql_config}"+''' -q 'select current_date' --connection sf_conn  2>&1''')
-		FILES_CHANGED= sh(script: "set +x && git log -m -1 --name-only --diff-filter=ACM --pretty='format:' `git rev-parse HEAD` | sort -u | grep -i '.sql\$' > ${WORKSPACE}/committed_files.txt")
+                sh('''
+                set +x     
+                echo "" > snow_sql_output.log
+                echo "" > status
+				''')
+				sh('''snowsql --dbname 'cmt_dev' --schemaname 'cmt_schema1' --config  '''+"${snowsql_config}"+''' -q 'select current_date' --connection sf_conn  2>&1''')
+				FILES_CHANGED= sh(script: "set +x && git log -m -1 --name-only --diff-filter=ACM --pretty='format:' `git rev-parse HEAD` | sort -u | grep -i '.sql\$' > ${WORKSPACE}/committed_files.txt")
                 sh("set +x && echo 'DEPLOYBEGIN' && echo '******Deploying from release/${env} Branch to ${app_name} ${env} Environment******'")
                 sh("cat ${WORKSPACE}/committed_files.txt")
 				
@@ -47,9 +52,6 @@ pipeline {
                     }
 								
 				sh('''
-                set +x     
-                echo "" > snow_sql_output.log
-                echo "" > status
                 git show --pretty=fuller ${GIT_COMMIT} | head -n 10 | tr -d '[:blank:]' | sed 's/commit/CommitID:/' | sed 's/</{/' | sed 's/>/}/' | sed 's/(//' | sed 's/)//' > git_details.txt     
                 COMMIT_ONELINER=`sed s/"'"//g git_details.txt | xargs`
                 cat git_details.txt
