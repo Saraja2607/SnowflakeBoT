@@ -1,1 +1,1 @@
-create table fin1(col1 varchar); 
+create table fin3(col1 varchar); 
