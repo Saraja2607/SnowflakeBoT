@@ -1,1 +1,1 @@
-create table test(col1 varchar(10));
+create table testAug(col1 varchar(10));
