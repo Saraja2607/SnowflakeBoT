@@ -1,1 +1,1 @@
-create table hr2(col num); --test
+create table hr1(col1 varchar); --test
