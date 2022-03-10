@@ -1,7 +1,7 @@
 def env='prod'
 def app_name='snowflake'
 def repo_name='SnowflakeBoT'
-def snowsql_config="/home/ubuntu/.snowsql/config"
+def snowsql_config="/home/cmtuser1/.snowsql/config"
 
 def branch_name='release/prod'
 def code_repo_name='https://github.com/Saraja2607/SnowflakeBoT.git' // SSH Repository of deploy repo //
