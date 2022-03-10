@@ -142,8 +142,7 @@ pipeline {
 				sh 'echo "before python exec"'
 				sh (''' 
 					echo "This is my test step"
-    				python /home/cmtuser1/test_email.py  '''+"${JOB_NAME}"+"_"+"${currentBuild.currentResult}"+"_"+"${env}"+"_Build#"+"${BUILD_NUMBER}"+"-"+"${status}"+''' '''+"${body}"+''' '''+"'${READ_LOG}'"+''' '''+"snow_sql_output.log"+''' 
-					echo "This is my after python step"
+    					echo "This is my after python step"
     				''')
 			}
 		}
